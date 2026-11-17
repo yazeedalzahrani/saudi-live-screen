@@ -460,7 +460,7 @@
   });
 
   var DATA_URL = "https://yazeedalzahrani.github.io/Travel-advisory-watch/data.json";
-  var FLIGHTS_URL = "https://yazeedalzahrani.github.io/travel-advisory-watch/flights.json";
+  var FLIGHTS_URL = "flights.json";
   var flightsAll = [];
   fetch(FLIGHTS_URL, { cache: "no-store" }).then(function (r) { return r.json(); })
     .then(function (d) { flightsAll = d.flights || []; }).catch(function () { flightsAll = []; });
