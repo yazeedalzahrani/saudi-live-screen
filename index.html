@@ -331,12 +331,7 @@
   mapBtn.innerHTML = '<span class="fl">🗺️</span><span><span class="nm">Airport map</span><span class="lv">Airports and borders</span></span>';
   mapBtn.addEventListener("click", function () { setMap(!mapOn); });
   mapLi.appendChild(mapBtn); list.appendChild(mapLi);
-  var flLi = document.createElement("li");
-  var flBtn = document.createElement("button");
-  flBtn.type = "button";
-  flBtn.innerHTML = '<span class="fl">✈️</span><span><span class="nm">Flights to Saudi Arabia</span><span class="lv">Airlines, routes and status</span></span>';
-  flBtn.addEventListener("click", openFlights);
-  flLi.appendChild(flBtn); list.insertBefore(flLi, list.firstChild);
+
   var scale = document.getElementById("scale");
   for (var m = 0; m < 5; m++) scale.appendChild(document.createElement("span"));
 
@@ -438,23 +433,6 @@
     overlay.hidden = false;
     document.getElementById("bclose").focus();
   }
-  function openFlights() {
-    document.getElementById("bt").textContent = "Flights to Saudi Arabia";
-    document.getElementById("bauth").textContent = "All countries. Status and date as listed in the advisory watch.";
-    document.getElementById("blist").innerHTML = "";
-    var fl = document.getElementById("bflights"); fl.innerHTML = "";
-    if (!flightsAll.length) { var none = document.createElement("li"); none.textContent = "Flights could not be loaded."; fl.appendChild(none); }
-    flightsAll.forEach(function (f) {
-      var li = document.createElement("li");
-      var code = document.createElement("span"); code.className = "code"; code.textContent = f.airline; var t = document.createElement("span"); t.textContent = " " + f.from + " → " + f.to + ": " + f.status + (f.date ? " (" + f.date + ")" : ""); li.appendChild(code); li.appendChild(t); fl.appendChild(li);
-    });
-    var src = document.getElementById("bsrc"); src.innerHTML = "";
-    var a = document.createElement("a"); a.href = "https://yazeedalzahrani.github.io/travel-advisory-watch/flights.html"; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Open the full flights page ↗";
-    src.appendChild(a);
-    setPaused(true);
-    overlay.hidden = false;
-    document.getElementById("bclose").focus();
-  }
   function closeDetail() { overlay.hidden = true; }
   document.getElementById("openbrief").addEventListener("click", openDetail);
   document.getElementById("bclose").addEventListener("click", closeDetail);
@@ -526,7 +504,7 @@
       });
       POINTS[c.name] = [c.detail || "See the official source for full detail."];
     });
-    Array.prototype.slice.call(list.children).forEach(function (li) { if (li !== mapLi && li !== flLi) li.remove(); });
+    Array.prototype.slice.call(list.children).forEach(function (li) { if (li !== mapLi) li.remove(); });
     COUNTRIES.forEach(function (c, k) {
       var li = document.createElement("li");
       var b = document.createElement("button");
