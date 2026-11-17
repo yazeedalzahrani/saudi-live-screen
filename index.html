@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saudi Advisory Watch: travel advice briefing (test v3)</title>
+<style>
+  :root {
+    --bg:#0f1419; --panel:#161d24; --raised:#1c2530; --line:#2a3642;
+    --ink:#f2f4f6; --muted:#9aa7b4; --accent:#c9a45c; --alert:#d9825b;
+    --serif: Georgia, "Times New Roman", serif; --sans: "Segoe UI", Arial, Helvetica, sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:var(--sans); overflow:hidden; }
+  button { font:inherit; color:var(--ink); background:transparent; border:1px solid var(--line); border-radius:6px; padding:8px 14px; cursor:pointer; min-height:40px; }
+  button:hover { border-color:var(--accent); }
+  button:focus-visible, a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  a { color:var(--accent); }
+
+  .wrap { height:100%; display:grid; grid-template-columns: 240px 1fr; grid-template-rows:auto 1fr auto; }
+
+  /* Disclaimer: always visible, quiet but clear */
+  .disclaimer { grid-column:1 / -1; background:var(--raised); border-bottom:1px solid var(--line); padding:10px 28px; font-size:13px; color:var(--muted); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .disclaimer strong { color:var(--alert); font-weight:600; letter-spacing:.04em; }
+
+  /* Left: country index */
+  .index { background:var(--panel); border-right:1px solid var(--line); padding:26px 16px; overflow:auto; }
+  .index h2 { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600; margin:0 10px 14px; }
+  .index ol { list-style:none; margin:0; padding:0; }
+  .index li button { width:100%; text-align:left; border:0; border-left:2px solid transparent; border-radius:0; padding:10px 12px; display:grid; grid-template-columns:28px 1fr; gap:8px; align-items:center; }
+  .index li button:hover { background:var(--raised); }
+  .index li button[aria-current="true"] { background:var(--raised); border-left-color:var(--accent); }
+  .index .fl { font-size:20px; }
+  .index .nm { font-size:15px; font-weight:600; display:block; }
+  .index .lv { font-size:12px; color:var(--muted); display:block; margin-top:2px; }
+
+  /* Stage */
+  .stage { display:flex; flex-direction:column; min-height:0; }
+  .head { display:flex; justify-content:space-between; align-items:baseline; gap:20px; padding:22px 40px 0; }
+  .head h1 { font-family:var(--serif); font-weight:400; font-size:28px; margin:0; letter-spacing:.01em; }
+  .head .asof { font-size:13px; color:var(--muted); }
+
+  .main { flex:1; display:grid; grid-template-columns: 1.1fr 0.9fr; gap:28px; padding:22px 40px 28px; min-height:0; }
+
+  /* Country summary */
+  .summary { display:flex; flex-direction:column; min-height:0; }
+  .country { display:flex; align-items:center; gap:18px; border-bottom:1px solid var(--line); padding-bottom:18px; }
+  .country .fl { font-size:64px; line-height:1; }
+  .country h2 { font-family:var(--serif); font-weight:400; font-size:clamp(34px,4vw,56px); margin:0; line-height:1.05; }
+  .country .auth { color:var(--muted); font-size:15px; margin-top:6px; }
+  .rating { margin:26px 0 8px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  .scale { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .scale span { height:8px; border-radius:2px; background:var(--line); transition:background .4s ease; }
+  .scale span.on { background:var(--alert); }
+  .level { font-size:clamp(22px,2.4vw,32px); margin:18px 0 10px; font-family:var(--serif); }
+  .detail { font-size:17px; line-height:1.55; color:#d8dee4; margin:0; max-width:60ch; }
+  .meta { font-size:13px; color:var(--muted); margin-top:16px; }
+  .actions { display:flex; gap:10px; margin-top:auto; padding-top:20px; flex-wrap:wrap; }
+  .actions a { display:inline-flex; align-items:center; border:1px solid var(--line); border-radius:6px; padding:8px 14px; text-decoration:none; color:var(--ink); min-height:40px; }
+  .actions a:hover { border-color:var(--accent); }
+
+  /* Updates panel */
+  .updates { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:22px 24px; overflow:auto; min-height:0; }
+  .updates h2 { font-family:var(--serif); font-weight:400; font-size:20px; margin:0 0 14px; }
+  .updates ol { list-style:none; margin:0; padding:0; }
+  .updates li { display:grid; grid-template-columns:96px 1fr; gap:14px; padding:14px 0; border-top:1px solid var(--line); }
+  .updates li:first-child { border-top:0; padding-top:0; }
+  .updates time { font-size:13px; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .updates h3 { font-size:15px; margin:0 0 4px; font-weight:600; }
+  .updates p { font-size:14px; color:var(--muted); margin:0; line-height:1.5; }
+
+  /* Footer */
+  .foot { display:flex; align-items:center; gap:14px; padding:14px 40px; border-top:1px solid var(--line); background:var(--panel); }
+  .bar { flex:1; height:3px; background:var(--line); border-radius:2px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:var(--accent); }
+  .foot .next { font-size:13px; color:var(--muted); white-space:nowrap; }
+  .foot .next strong { color:var(--ink); font-weight:600; }
+
+  .qr { display:flex; align-items:center; gap:12px; font-size:13px; color:var(--muted); padding-left:14px; border-left:1px solid var(--line); }
+  .qr img { width:72px; height:72px; background:#fff; padding:4px; border-radius:4px; }
+
+  .side { display:grid; grid-template-rows: minmax(0,1.6fr) minmax(0,0.9fr); gap:16px; min-height:0; }
+  .mapcard { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; display:flex; flex-direction:column; min-height:0; }
+  .mapcard h2 { font-family:var(--serif); font-weight:400; font-size:20px; margin:0 0 10px; }
+  .mapcard svg { width:100%; height:100%; flex:1; min-height:0; display:block; }
+  .mapcard .mapwrap { flex:1; min-height:0; display:flex; }
+  .mapinfo { font-size:13px; color:var(--muted); margin-top:10px; line-height:1.5; min-height:4.5em; }
+  .mapinfo strong { color:var(--ink); font-weight:600; }
+  .mapinfo li { margin:4px 0; }
+  .mapinfo ul { margin:6px 0 0; padding-left:0; list-style:none; }
+  .mapinfo .code { display:inline-block; min-width:30px; color:var(--accent); font-weight:600; }
+  #map .land { fill:#1d2731; stroke:#3a4a58; stroke-width:1; stroke-linejoin:round; }
+  #map .band, #map .land { pointer-events:none; }
+  #map .band { fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  #map .band1 { stroke:rgba(217,130,91,.35); } #map .band2 { stroke:rgba(217,130,91,.2); } #map .band3 { stroke:rgba(217,130,91,.1); }
+  #map .geo { fill:var(--muted); font-size:11px; letter-spacing:.08em; opacity:.7; }
+  #map .pin { cursor:pointer; outline:none; }
+  #map .pin .hit { fill:transparent; }
+  #map .pin .dot { stroke:var(--panel); stroke-width:2; }
+  #map .pin.crit .dot { fill:var(--alert); } #map .pin.warn .dot { fill:var(--accent); } #map .pin.ok .dot { fill:#7fb38f; }
+  #map .pin .ring { fill:none; stroke-width:2; opacity:0; }
+  #map .pin.crit .ring { stroke:var(--alert); animation: ping 2.4s ease-out infinite; }
+  #map .pin.warn .ring { stroke:var(--accent); animation: ping 3.2s ease-out infinite; }
+  #map .pin[aria-pressed="true"] .dot { stroke:var(--ink); stroke-width:3; }
+  #map .pin .lbl { fill:var(--ink); font-size:12px; font-weight:600; paint-order:stroke; stroke:var(--panel); stroke-width:3px; pointer-events:none; }
+  @keyframes ping { 0% { opacity:.8; r:7; } 100% { opacity:0; r:20; } }
+  @media (prefers-reduced-motion: reduce) { #map .pin .ring { animation:none !important; } }
+
+  /* Full detail overlay */
+  #overlay { position:fixed; inset:0; z-index:50; background:rgba(8,11,14,.92); display:flex; align-items:center; justify-content:center; padding:5vh 6vw; }
+  #overlay[hidden] { display:none; }
+  #overlay .panel { max-width:760px; width:100%; max-height:90vh; overflow:auto; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:32px 36px; }
+  #overlay h2 { font-family:var(--serif); font-weight:400; font-size:30px; margin:0; }
+  #overlay .auth2 { color:var(--muted); font-size:14px; margin:6px 0 22px; }
+  #overlay ul { font-size:16px; line-height:1.6; padding-left:1.2em; margin:0 0 22px; color:#d8dee4; }
+  #overlay .row { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+
+  body.mapmode .summary, body.mapmode .updates { display:none; }
+  body.mapmode .main { grid-template-columns:1fr; }
+  body.mapmode .side { grid-template-rows:minmax(0,1fr); }
+  .index li button.mapbtn { border-top:1px solid var(--line); margin-top:8px; padding-top:14px; }
+  .index li button.mapbtn[aria-pressed="true"] { background:var(--raised); border-left-color:var(--accent); }
+  @media (prefers-reduced-motion: reduce) {
+    .wrap { grid-template-columns:1fr; grid-template-rows:auto auto 1fr auto; }
+    .index { border-right:0; border-bottom:1px solid var(--line); display:flex; gap:6px; overflow-x:auto; padding:10px; }
+    .index h2 { display:none; }
+    .index ol { display:flex; gap:6px; }
+    .index li button { width:auto; white-space:nowrap; grid-template-columns:1fr; }
+    .index .lv { display:none; }
+    .main { grid-template-columns:1fr; overflow:auto; padding:18px 20px; }
+    .head,.foot { padding-left:20px; padding-right:20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .scale span { transition:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="disclaimer" role="note">
+    <span><strong>UNOFFICIAL SUMMARY.</strong> Not made by the Saudi Tourism Authority (STA). For information only.</span>
+    <span>Check the official source before you travel.</span>
+  </div>
+
+  <nav class="index" aria-label="Countries">
+    <h2>Countries</h2>
+    <ol id="countries"></ol>
+  </nav>
+
+  <div class="stage">
+    <div class="head">
+      <h1>Travel advice for Saudi Arabia</h1>
+      <span class="asof" id="asof">Sample data</span>
+    </div>
+
+    <div class="main">
+      <section class="summary" id="card" aria-live="polite">
+        <div class="country">
+          <div class="fl" id="flag"></div>
+          <div>
+            <h2 id="name"></h2>
+            <div class="auth" id="auth"></div>
+          </div>
+        </div>
+        <div class="rating">Current position</div>
+        <div class="scale" id="scale" aria-hidden="true"></div>
+        <p class="level" id="level"></p>
+        <p class="detail" id="detail"></p>
+        <p class="meta" id="meta"></p>
+        <div class="actions">
+          <button type="button" id="openbrief">View full detail</button>
+          <a id="srclink" href="#" target="_blank" rel="noopener">Official source ↗</a>
+        </div>
+      </section>
+
+      <div class="side">
+        <section class="mapcard" aria-label="Airports and borders">
+          <h2>Airports and borders</h2>
+          <div class="mapwrap"><svg id="map" viewBox="0 0 560 450" role="group" aria-label="Schematic map of Saudi Arabia"></svg></div>
+          <div class="mapinfo" id="mapinfo"></div>
+        </section>
+        <aside class="updates" id="updates" aria-label="Recent updates"></aside>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+      <span class="next">Next: <strong id="next"></strong></span>
+      <button type="button" id="prev" aria-label="Previous country">Previous</button>
+      <button type="button" id="pause" aria-label="Pause or resume">Pause</button>
+      <button type="button" id="nextbtn" aria-label="Next country">Next</button>
+      <div class="qr"><img id="qrimg" alt="QR code linking to the site"><span>Scan for all updates</span></div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay" role="dialog" aria-modal="true" aria-labelledby="bt" hidden>
+  <div class="panel">
+    <h2 id="bt"></h2>
+    <p class="auth2" id="bauth"></p>
+    <ul id="blist"></ul>
+    <div class="row">
+      <span id="bsrc"></span>
+      <button type="button" id="bclose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Starts with sample content, then replaces it with the live data.json from the advisory website (refreshed every 30 minutes).
+  var COUNTRIES = [
+    { flag:"🇬🇧", name:"United Kingdom", auth:"Foreign, Commonwealth & Development Office", level:"All but essential travel", meter:4, detail:"Sample text. The screen shows the headline from the official data.", meta:"Source date: sample", url:"https://www.gov.uk/foreign-travel-advice/saudi-arabia" },
+    { flag:"🇺🇸", name:"United States", auth:"Department of State", level:"Level 3: Reconsider travel", meter:3, detail:"Sample text. The screen shows the official level from the State Department feed.", meta:"Source date: sample", url:"https://travel.state.gov/" },
+    { flag:"🇪🇸", name:"Spain", auth:"Ministerio de Asuntos Exteriores", level:"Recommendations in force", meter:2, detail:"Sample text. The in-force date is copied from the official page.", meta:"Source date: sample", url:"https://www.exteriores.gob.es/" },
+    { flag:"🇫🇷", name:"France", auth:"France Diplomatie", level:"Latest update date", meter:2, detail:"Sample text. The update date is copied from the official page.", meta:"Source date: sample", url:"https://www.diplomatie.gouv.fr/" },
+    { flag:"🇮🇹", name:"Italy", auth:"Viaggiare Sicuri", level:"Official notice", meter:3, detail:"Sample text. The banner is copied word for word from the official page.", meta:"Source date: sample", url:"https://www.viaggiaresicuri.it/" },
+    { flag:"🇩🇪", name:"Germany", auth:"Auswärtiges Amt", level:"Summary checked by hand", meter:2, detail:"Sample text. The headline is written by hand.", meta:"Source date: sample", url:"https://www.auswaertiges-amt.de/" },
+    { flag:"🇷🇺", name:"Russia", auth:"Foreign Ministry", level:"Summary checked by hand", meter:3, detail:"Sample text. The headline is written by hand.", meta:"Source date: sample", url:"https://www.kdmid.ru/" },
+    { flag:"🇨🇳", name:"China", auth:"Embassy in Saudi Arabia", level:"Avoid domestic air travel for now", meter:4, detail:"Sample text. Taken from the embassy notice.", meta:"Source date: sample", url:"http://sa.china-embassy.gov.cn" },
+    { flag:"🇮🇳", name:"India", auth:"Embassy in Riyadh", level:"Check flights before you travel", meter:3, detail:"Sample text. Taken from the embassy advisory.", meta:"Source date: sample", url:"https://www.eoiriyadh.gov.in/" }
+  ];
+  // Recent dated updates per country (sample)
+  var BRIEFS = {
+    "United Kingdom": [["23 Jul 2026","Advice tightened","FCDO advises against all but essential travel to Saudi Arabia's border areas."],["3 Mar 2026","Entry changes","New information about entry to Saudi Arabia."]],
+    "United States": [["16 Sep 2026","Level 3","Reconsider travel. Risks include missile and drone attacks."],["2 Mar 2026","Level set","Advisory issued for Saudi Arabia."]],
+    "China": [["22 Oct 2026","Notice","Avoid domestic air travel for now; stay away from airports and sensitive sites."],["14 Jul 2026","Notice","Stay alert and follow official safety announcements."]],
+    "India": [["16 Oct 2026","Advisory","Plan around airport disruption; check flight availability."],["8 Mar 2026","Advisory","Stay vigilant and follow safety guidance."]]
+  };
+  var POINTS = {
+    "United Kingdom": ["Current FCDO level and summary (sample)", "Areas to avoid and why (sample)", "Entry rules for travellers (sample)"],
+    "United States": ["Current level and risk indicators (sample)", "Areas to avoid (sample)", "Embassy contact details (sample)"],
+    "China": ["Embassy notice on domestic flights (sample)", "Consular hotline (sample)"],
+    "India": ["Latest embassy advisory (sample)", "Helpline numbers (sample)"]
+  };
+  document.getElementById("qrimg").src = "https://api.qrserver.com/v1/create-qr-code/?size=216x216&margin=4&data=" + encodeURIComponent("https://yazeedalzahrani.github.io/Travel-advisory-watch/");
+  // Airports and border map (data from the site's data.json)
+  var AIRPORTS = [{"id": "ruh", "name": "Riyadh King Khalid (RUH)", "lon": 46.7, "lat": 24.96, "state": "crit", "notes": {"uk": "Struck by a missile on 10 Oct and still at risk of attack. FCDO advises against all but essential travel to Saudi airports.", "us": "The embassy told Americans to avoid the airport and the surrounding area after the 10 Oct attacks.", "fr": "Formally advised against visiting or connecting through the airport.", "it": "Farnesina recommends avoiding non-essential trips to the airport area and avoiding the airport for arrivals and departures.", "de": "Explicit warning against using the airport. Limited flights by Saudi airlines were due to resume from 24 Oct."}}, {"id": "jed", "name": "Jeddah King Abdulaziz (JED)", "lon": 39.15, "lat": 21.68, "state": "warn", "notes": {"uk": "Covered by the advice against all but essential travel to Saudi airports.", "us": "State Dept urged extreme caution at all major Saudi airports on 12 Oct.", "fr": "Formally advised against visiting or connecting through the airport.", "de": "Flights at airports other than Riyadh are described as partly irregular and risky."}}, {"id": "dmm", "name": "Dammam King Fahd (DMM)", "lon": 49.8, "lat": 26.47, "state": "warn", "notes": {"uk": "Covered by the advice against all but essential travel to Saudi airports.", "us": "State Dept urged extreme caution at all major Saudi airports on 12 Oct.", "fr": "Formally advised against visiting or connecting through the airport.", "de": "Reported as affected by recent attacks. Flights are partly irregular and risky."}}, {"id": "med", "name": "Medina Prince Mohammad (MED)", "lon": 39.7, "lat": 24.55, "state": "ok", "notes": {"uk": "The one Saudi airport the FCDO leaves out of its all-but-essential advice."}}, {"id": "abh", "name": "Abha (AHB)", "lon": 42.66, "lat": 18.24, "state": "warn", "notes": {"uk": "Named by the FCDO among locations under heightened threat.", "fr": "The region (Abha, Khamis Mushait) is formally advised against."}}, {"id": "jaz", "name": "Jazan (GIZ)", "lon": 42.59, "lat": 16.9, "state": "warn", "notes": {"uk": "Named by the FCDO among locations under heightened threat, close to the Yemen border.", "fr": "The Jizan region is formally advised against."}}, {"id": "njr", "name": "Najran (EAM)", "lon": 44.42, "lat": 17.61, "state": "warn", "notes": {"uk": "Named by the FCDO among locations under heightened threat, close to the Yemen border.", "fr": "The Najran region is formally advised against."}}];
+  var KX = 23.66, KY = 26, LON0 = 34.3, LAT0 = 32.8, PAD = 20;
+  function px(lon, lat) { return [PAD + (lon - LON0) * KX, 10 + (LAT0 - lat) * KY]; }
+  var OUTLINE = [[34.95,29.35],[36.07,29.19],[37.5,30.0],[38.0,30.5],[39.2,32.15],[40.4,31.9],[42.1,31.1],[44.7,29.2],[46.55,29.1],[48.4,28.55],[48.9,27.6],[49.65,27.0],[50.15,26.65],[50.2,26.2],[50.05,25.4],[50.8,24.75],[51.6,24.25],[52.0,23.0],[53.5,22.8],[55.2,22.7],[55.67,22.0],[55.0,20.0],[52.0,19.0],[50.5,18.6],[48.8,18.2],[47.0,17.4],[46.0,17.25],[44.5,17.4],[43.9,17.35],[43.2,16.7],[42.75,16.4],[42.6,16.9],[41.1,19.1],[39.2,21.5],[38.0,24.1],[37.2,25.3],[35.7,27.35]];
+  var YEMEN = [[52.0,19.0],[50.5,18.6],[48.8,18.2],[47.0,17.4],[46.0,17.25],[44.5,17.4],[43.9,17.35],[43.2,16.7],[42.75,16.4]];
+  var GEO = [["JORDAN",36.4,30.55],["IRAQ",42.2,31.7],["KUWAIT",46.2,29.7],["QATAR",51.4,25.5],["UAE",53.6,23.9],["OMAN",56.0,21.1],["YEMEN",47.5,16.1],["RED SEA",36.4,24.0],["GULF",51.4,27.2]];
+  var NS = "http://www.w3.org/2000/svg";
+  function sv(tag, attrs) { var n = document.createElementNS(NS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); return n; }
+  function pts(arr) { return arr.map(function (p) { var q = px(p[0], p[1]); return q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" "); }
+  function buildMap() {
+    var svg = document.getElementById("map");
+    var defs = sv("defs", {}); var cp = sv("clipPath", { id: "saClip" });
+    cp.appendChild(sv("polygon", { points: pts(OUTLINE) })); defs.appendChild(cp); svg.appendChild(defs);
+    svg.appendChild(sv("polygon", { points: pts(OUTLINE), "class": "land" }));
+    var g = sv("g", { "clip-path": "url(#saClip)" });
+    [["band1", 46.8], ["band2", 37.4], ["band3", 5.5]].forEach(function (b) {
+      g.appendChild(sv("polyline", { points: pts(YEMEN), "class": "band " + b[0], "stroke-width": b[1] }));
+    });
+    svg.appendChild(g);
+    GEO.forEach(function (t) { var q = px(t[1], t[2]); var x = sv("text", { x: q[0], y: q[1], "class": "geo" }); x.textContent = t[0]; svg.appendChild(x); });
+    var info = document.getElementById("mapinfo");
+    var names = { uk: "UK", us: "US", fr: "France", it: "Italy", de: "Germany" };
+    function show(a, pin) {
+      info.innerHTML = "";
+      var t = document.createElement("strong"); t.textContent = a.name; info.appendChild(t);
+      var ul = document.createElement("ul");
+      Object.keys(names).forEach(function (k) {
+        if (!a.notes[k]) return;
+        var li = document.createElement("li");
+        var c = document.createElement("span"); c.className = "code"; c.textContent = names[k];
+        li.appendChild(c); li.appendChild(document.createTextNode(a.notes[k])); ul.appendChild(li);
+      });
+      info.appendChild(ul);
+      svg.querySelectorAll(".pin").forEach(function (p) { p.setAttribute("aria-pressed", p === pin ? "true" : "false"); });
+    }
+    var first = null;
+    AIRPORTS.forEach(function (a) {
+      var q = px(a.lon, a.lat);
+      var pin = sv("g", { "class": "pin " + a.state, tabindex: "0", role: "button", "aria-pressed": "false", "aria-label": a.name });
+      pin.appendChild(sv("circle", { cx: q[0], cy: q[1], r: 18, "class": "hit" }));
+      pin.appendChild(sv("circle", { cx: q[0], cy: q[1], r: 8, "class": "ring" }));
+      pin.appendChild(sv("circle", { cx: q[0], cy: q[1], r: 7, "class": "dot" }));
+      var tx = sv("text", { x: q[0] + (a.id === "dmm" ? -12 : 12), y: q[1] + 4, "class": "lbl", "text-anchor": a.id === "dmm" ? "end" : "start" });
+      tx.textContent = a.name.split(" ")[0]; pin.appendChild(tx);
+      pin.addEventListener("click", function () { show(a, pin); });
+      pin.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(a, pin); } });
+      svg.appendChild(pin);
+      if (a.id === "ruh") first = [a, pin];
+    });
+    if (first) show(first[0], first[1]);
+  }
+  buildMap();
+
+  var SECONDS = 18;
+  var i = 0, elapsed = 0, paused = false, mapOn = false;
+
+  var list = document.getElementById("countries");
+  COUNTRIES.forEach(function (c, k) {
+    var li = document.createElement("li");
+    var b = document.createElement("button");
+    b.type = "button";
+    b.innerHTML = '<span class="fl"></span><span><span class="nm"></span><span class="lv"></span></span>';
+    b.querySelector(".fl").textContent = c.flag;
+    b.querySelector(".nm").textContent = c.name;
+    b.querySelector(".lv").textContent = c.level;
+    b.addEventListener("click", function () { go(k); });
+    li.appendChild(b); list.appendChild(li);
+  });
+  var mapLi = document.createElement("li");
+  var mapBtn = document.createElement("button");
+  mapBtn.type = "button"; mapBtn.className = "mapbtn"; mapBtn.setAttribute("aria-pressed", "false");
+  mapBtn.innerHTML = '<span class="fl">🗺️</span><span><span class="nm">Airport map</span><span class="lv">Airports and borders</span></span>';
+  mapBtn.addEventListener("click", function () { setMap(!mapOn); });
+  mapLi.appendChild(mapBtn); list.appendChild(mapLi);
+  var scale = document.getElementById("scale");
+  for (var m = 0; m < 5; m++) scale.appendChild(document.createElement("span"));
+
+  function renderUpdates(c) {
+    var box = document.getElementById("updates");
+    box.innerHTML = "";
+    var h = document.createElement("h2"); h.textContent = "Recent updates"; box.appendChild(h);
+    var items = BRIEFS[c.name] || [["Sample", "No updates yet", "Sample text for this country."]];
+    var ol = document.createElement("ol");
+    items.forEach(function (it) {
+      var li = document.createElement("li");
+      var t = document.createElement("time"); t.textContent = it[0]; li.appendChild(t);
+      var d = document.createElement("div");
+      var h3 = document.createElement("h3"); h3.textContent = it[1]; d.appendChild(h3);
+      var p = document.createElement("p"); p.textContent = it[2]; d.appendChild(p);
+      li.appendChild(d);
+      ol.appendChild(li);
+    });
+    box.appendChild(ol);
+  }
+
+  function go(n) {
+    setMap(false);
+    i = (n + COUNTRIES.length) % COUNTRIES.length;
+    var c = COUNTRIES[i];
+    document.getElementById("card").animate([{ opacity:0 }, { opacity:1 }], { duration: 400, easing: "ease-out" });
+    document.getElementById("flag").textContent = c.flag;
+    document.getElementById("name").textContent = c.name;
+    document.getElementById("auth").textContent = c.auth;
+    document.getElementById("level").textContent = c.level;
+    document.getElementById("detail").textContent = c.detail;
+    document.getElementById("meta").textContent = c.meta;
+    document.getElementById("next").textContent = COUNTRIES[(i + 1) % COUNTRIES.length].name;
+    document.getElementById("srclink").href = c.url;
+    Array.prototype.forEach.call(scale.children, function (s, k) { s.classList.toggle("on", k < c.meter); });
+    Array.prototype.forEach.call(list.querySelectorAll("button"), function (b, k) { b.setAttribute("aria-current", k === i ? "true" : "false"); });
+    renderUpdates(c);
+    elapsed = 0;
+  }
+
+  function setMap(on) {
+    mapOn = on;
+    document.body.classList.toggle("mapmode", on);
+    mapBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    if (!on) elapsed = 0;
+  }
+
+  function tick() {
+    if (paused || mapOn) return;
+    elapsed += 0.1;
+    document.getElementById("bar").style.width = Math.min(100, (elapsed / SECONDS) * 100) + "%";
+    if (elapsed >= SECONDS) go(i + 1);
+  }
+
+  function setPaused(p) {
+    paused = p;
+    document.getElementById("pause").textContent = paused ? "Resume" : "Pause";
+  }
+
+  document.getElementById("pause").addEventListener("click", function () { setPaused(!paused); });
+  document.getElementById("nextbtn").addEventListener("click", function () { go(i + 1); });
+  document.getElementById("prev").addEventListener("click", function () { go(i - 1); });
+
+  var overlay = document.getElementById("overlay");
+  function openDetail() {
+    var c = COUNTRIES[i];
+    document.getElementById("bt").textContent = c.name;
+    document.getElementById("bauth").textContent = c.auth;
+    var ul = document.getElementById("blist"); ul.innerHTML = "";
+    (POINTS[c.name] || ["See the official source for full detail."]).forEach(function (p) { var li = document.createElement("li"); li.textContent = p; ul.appendChild(li); });
+    var src = document.getElementById("bsrc"); src.innerHTML = "";
+    var a = document.createElement("a"); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Official source ↗";
+    src.appendChild(a);
+    setPaused(true);
+    overlay.hidden = false;
+    document.getElementById("bclose").focus();
+  }
+  function closeDetail() { overlay.hidden = true; }
+  document.getElementById("openbrief").addEventListener("click", openDetail);
+  document.getElementById("bclose").addEventListener("click", closeDetail);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeDetail(); });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") go(i + 1);
+    else if (e.key === "ArrowLeft") go(i - 1);
+    else if (e.key === " ") { e.preventDefault(); setPaused(!paused); }
+    else if (e.key === "Escape") closeDetail();
+  });
+
+  var tx = null, ty = null;
+  document.addEventListener("touchstart", function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (tx === null) return;
+    if (e.target.closest && e.target.closest("button, a, .index, .updates")) { tx = null; return; }
+    var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    tx = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? i + 1 : i - 1);
+  });
+
+  var DATA_URL = "https://yazeedalzahrani.github.io/Travel-advisory-watch/data.json";
+  var FLAG_BY_CODE = { UK:"🇬🇧", US:"🇺🇸", FR:"🇫🇷", IT:"🇮🇹", DE:"🇩🇪", ES:"🇪🇸", RU:"🇷🇺", CN:"🇨🇳", IN:"🇮🇳" };
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function fmtDate(s) {
+    var p = String(s || "").slice(0, 10).split("-");
+    if (p.length < 3) return s || "";
+    return parseInt(p[2], 10) + " " + MONTHS[parseInt(p[1], 10) - 1] + " " + p[0];
+  }
+  function meterFor(h) {
+    h = h || "";
+    if (/Against all travel/i.test(h)) return 5;
+    if (/essential/i.test(h)) return 4;
+    if (/Reconsider|caution|Exercise|Check|Plan/i.test(h)) return 3;
+    return 2;
+  }
+  function applyData(d) {
+    var rows = (d.countries || []).filter(function (c) { return c.name; });
+    if (!rows.length) return;
+    COUNTRIES = rows.map(function (c) {
+      return {
+        flag: FLAG_BY_CODE[c.code] || "🏳️", name: c.name, auth: c.authority || "",
+        level: c.headline || "", meter: meterFor(c.headline), detail: c.detail || "",
+        meta: "Source date: " + fmtDate(c.page_date || c.verified) + " · Checked " + fmtDate(c.last_ok),
+        url: c.url || "#"
+      };
+    });
+    BRIEFS = {}; POINTS = {};
+    rows.forEach(function (c, k) {
+      BRIEFS[c.name] = (c.history || []).slice(0, 3).map(function (h) {
+        return [fmtDate(h.date), h.tag || "Update", h.text || h.title || ""];
+      });
+      POINTS[c.name] = [c.detail || "See the official source for full detail."];
+    });
+    Array.prototype.slice.call(list.children).forEach(function (li) { if (li !== mapLi) li.remove(); });
+    COUNTRIES.forEach(function (c, k) {
+      var li = document.createElement("li");
+      var b = document.createElement("button");
+      b.type = "button";
+      b.innerHTML = '<span class="fl"></span><span><span class="nm"></span><span class="lv"></span></span>';
+      b.querySelector(".fl").textContent = c.flag;
+      b.querySelector(".nm").textContent = c.name;
+      b.querySelector(".lv").textContent = c.level;
+      b.addEventListener("click", function () { go(k); });
+      li.appendChild(b);
+      list.insertBefore(li, mapLi);
+    });
+    go(i < COUNTRIES.length ? i : 0);
+  }
+  function loadData() {
+    fetch(DATA_URL, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(applyData)
+      .catch(function (e) { console.warn("Live data unavailable; showing sample content.", e); });
+  }
+  go(0);
+  loadData();
+  setInterval(loadData, 30 * 60 * 1000);
+  setInterval(tick, 100);
+</script>
+</body>
+</html>
