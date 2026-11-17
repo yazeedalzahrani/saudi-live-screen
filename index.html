@@ -490,10 +490,12 @@
     }
   }
   var FP_KEY = "sav-advice-fp";
-  function ding() {
+  var audioCtx = null, dingPending = false;
+  function playDing() {
     try {
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-      var ctx = new AC(), o = ctx.createOscillator(), g = ctx.createGain();
+      if (!audioCtx) audioCtx = new AC();
+      var ctx = audioCtx, o = ctx.createOscillator(), g = ctx.createGain();
       o.type = "sine"; o.frequency.value = 880;
       g.gain.setValueAtTime(0.0001, ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 0.02);
@@ -501,6 +503,23 @@
       o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.95);
     } catch (e) {}
   }
+  // Browsers block sound until the visitor interacts with the page.
+  // If a change arrives first, wait for the first tap/click/key and ding then.
+  function ding() {
+    if (audioCtx && audioCtx.state === "running") { playDing(); return; }
+    dingPending = true;
+  }
+  function unlockAudio() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state !== "running") audioCtx.resume();
+    } catch (e) {}
+    if (dingPending) { dingPending = false; playDing(); }
+  }
+  ["pointerdown", "keydown", "touchstart"].forEach(function (ev) {
+    document.addEventListener(ev, unlockAudio, { passive: true });
+  });
   function showChangePopup(text) {
     var box = document.getElementById("changepop");
     if (!box) {
