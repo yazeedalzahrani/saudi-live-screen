@@ -95,6 +95,12 @@
   .flpanel .fr b { font-weight:600; }
   .flpanel .fst { display:block; margin-top:2px; }
   .flpanel .fst.ok { color:#3ddc84; } .flpanel .fst.warn { color:#e6b04a; } .flpanel .fst.crit { color:#d9825b; }
+  .cflights { margin:14px 0 6px; border:1px solid var(--line); border-radius:8px; padding:12px 14px; max-height:260px; overflow:auto; }
+  .cflights h3 { font-family:var(--serif); font-weight:400; font-size:18px; margin:0 0 8px; }
+  .cflights ul { list-style:none; margin:0; padding:0; }
+  .cflights li { padding:7px 0; border-top:1px solid rgba(255,255,255,.1); font-size:13px; line-height:1.45; }
+  .cflights .code { display:inline-block; min-width:64px; color:var(--accent); font-weight:600; }
+  .cflights p { margin:0; font-size:13px; color:var(--muted); }
   .mapcard { display:none; }
   body.mapmode .mapcard { display:flex; }
   .mapcard { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; flex-direction:column; min-height:0; }
@@ -182,9 +188,9 @@
         <p class="level" id="level"></p>
         <p class="detail" id="detail"></p>
         <p class="meta" id="meta"></p>
+        <div class="cflights" id="cflights" aria-label="Flights to Saudi Arabia from this country"></div>
         <div class="actions">
           <button type="button" id="openbrief">View full detail</button>
-          <a id="srclink" href="#" target="_blank" rel="noopener">Official source ↗</a>
         </div>
       </section>
 
@@ -352,6 +358,23 @@
     box.appendChild(ol);
   }
 
+  function renderCardFlights() {
+    var box = document.getElementById("cflights"); if (!box) return;
+    var c = COUNTRIES[i];
+    var mine = flightsAll.filter(function (f) { return f.country === c.code; });
+    box.innerHTML = "";
+    var h = document.createElement("h3"); h.textContent = "Flights to Saudi Arabia"; box.appendChild(h);
+    if (!mine.length) { var none = document.createElement("p"); none.textContent = "No flights listed for this country."; box.appendChild(none); return; }
+    var ul = document.createElement("ul");
+    mine.forEach(function (f) {
+      var li = document.createElement("li");
+      var code = document.createElement("span"); code.className = "code"; code.textContent = f.airline;
+      var t = document.createElement("span"); t.textContent = " " + f.from + " → " + f.to + ": " + f.status + (f.date ? " (" + f.date + ")" : "");
+      li.appendChild(code); li.appendChild(t); ul.appendChild(li);
+    });
+    box.appendChild(ul);
+  }
+
   function go(n) {
     setMap(false);
     i = (n + COUNTRIES.length) % COUNTRIES.length;
@@ -364,7 +387,7 @@
     document.getElementById("detail").textContent = c.detail;
     document.getElementById("meta").textContent = c.meta;
     document.getElementById("next").textContent = COUNTRIES[(i + 1) % COUNTRIES.length].name;
-    document.getElementById("srclink").href = c.url;
+    renderCardFlights();
     Array.prototype.forEach.call(scale.children, function (s, k) { s.classList.toggle("on", k < c.meter); });
     Array.prototype.forEach.call(list.querySelectorAll("button"), function (b, k) { b.setAttribute("aria-current", k === i ? "true" : "false"); });
     renderUpdates(c);
@@ -458,7 +481,7 @@
   var FLIGHTS_URL = "flights.json";
   var flightsAll = [];
   fetch(FLIGHTS_URL, { cache: "no-store" }).then(function (r) { return r.json(); })
-    .then(function (d) { flightsAll = d.flights || []; }).catch(function () { flightsAll = []; });
+    .then(function (d) { flightsAll = d.flights || []; renderCardFlights(); }).catch(function () { flightsAll = []; });
 
   var FLAG_BY_CODE = { UK:"🇬🇧", US:"🇺🇸", FR:"🇫🇷", IT:"🇮🇹", DE:"🇩🇪", ES:"🇪🇸", RU:"🇷🇺", CN:"🇨🇳", IN:"🇮🇳" };
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
