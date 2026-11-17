@@ -29,6 +29,10 @@
   .index ol { list-style:none; margin:0; padding:0; }
   .index li button { width:100%; text-align:left; border:0; border-left:2px solid transparent; border-radius:0; padding:10px 12px; display:grid; grid-template-columns:28px 1fr; gap:8px; align-items:center; }
   .index li button:hover { background:var(--raised); }
+  .bfh { font-size:15px; margin:18px 0 6px; }
+  .bflights { list-style:none; padding:0; margin:0; }
+  .bflights li { padding:8px 0; border-top:1px solid rgba(255,255,255,.12); font-size:14px; }
+  .fst.ok { color:#3ddc84; } .fst.warn { color:#e6b04a; } .fst.crit { color:#d9825b; }
   .index li button[aria-current="true"] { background:var(--raised); border-left-color:var(--accent); }
   .index .fl { font-size:20px; }
   .index .nm { font-size:15px; font-weight:600; display:block; }
@@ -203,6 +207,8 @@
     <h2 id="bt"></h2>
     <p class="auth2" id="bauth"></p>
     <ul id="blist"></ul>
+    <h3 class="bfh">Flights to Saudi Arabia</h3>
+    <ul id="bflights" class="bflights"></ul>
     <div class="row">
       <span id="bsrc"></span>
       <button type="button" id="bclose">Close</button>
@@ -382,6 +388,15 @@
     document.getElementById("bauth").textContent = c.auth;
     var ul = document.getElementById("blist"); ul.innerHTML = "";
     (POINTS[c.name] || ["See the official source for full detail."]).forEach(function (p) { var li = document.createElement("li"); li.textContent = p; ul.appendChild(li); });
+    var fl = document.getElementById("bflights"); fl.innerHTML = "";
+    var mine = flightsAll.filter(function (f) { return f.country === c.code; });
+    if (!mine.length) { var none = document.createElement("li"); none.textContent = "No flights listed for this country."; fl.appendChild(none); }
+    mine.forEach(function (f) {
+      var li = document.createElement("li");
+      var head = document.createElement("strong"); head.textContent = f.airline + " · " + f.from + " → " + f.to;
+      var st = document.createElement("span"); st.className = "fst " + (f.level || ""); st.textContent = f.status + (f.date ? " (" + f.date + ")" : "");
+      li.appendChild(head); li.appendChild(document.createElement("br")); li.appendChild(st); fl.appendChild(li);
+    });
     var src = document.getElementById("bsrc"); src.innerHTML = "";
     var a = document.createElement("a"); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Official source ↗";
     src.appendChild(a);
@@ -412,6 +427,10 @@
   });
 
   var DATA_URL = "https://yazeedalzahrani.github.io/Travel-advisory-watch/data.json";
+  var FLIGHTS_URL = "https://yazeedalzahrani.github.io/travel-advisory-watch/flights.json";
+  var flightsAll = [];
+  fetch(FLIGHTS_URL, { cache: "no-store" }).then(function (r) { return r.json(); })
+    .then(function (d) { flightsAll = d.flights || []; }).catch(function () { flightsAll = []; });
   var FLAG_BY_CODE = { UK:"🇬🇧", US:"🇺🇸", FR:"🇫🇷", IT:"🇮🇹", DE:"🇩🇪", ES:"🇪🇸", RU:"🇷🇺", CN:"🇨🇳", IN:"🇮🇳" };
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function fmtDate(s) {
