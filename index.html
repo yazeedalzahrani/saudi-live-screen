@@ -101,6 +101,10 @@
   .cflights li { padding:7px 0; border-top:1px solid rgba(255,255,255,.1); font-size:13px; line-height:1.45; }
   .cflights .code { display:inline-block; min-width:64px; color:var(--accent); font-weight:600; }
   .cflights p { margin:0; font-size:13px; color:var(--muted); }
+  #changepop { position:fixed; top:18px; right:18px; z-index:200; max-width:340px; background:var(--panel); color:var(--ink,#f2f4f6); border:1px solid var(--accent); border-radius:10px; padding:12px 36px 12px 14px; box-shadow:0 6px 20px rgba(0,0,0,.35); font-size:14px; line-height:1.4; }
+  #changepop[hidden] { display:none; }
+  #changepop strong { display:block; font-weight:600; color:var(--accent); margin-bottom:2px; }
+  #changepop button { position:absolute; top:6px; right:8px; background:none; border:0; color:inherit; font-size:18px; cursor:pointer; }
   .mapcard { display:none; }
   body.mapmode .mapcard { display:flex; }
   .mapcard { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; flex-direction:column; min-height:0; }
@@ -485,10 +489,50 @@
       el.textContent = "Live feed unavailable. Showing last loaded content.";
     }
   }
+  var FP_KEY = "sav-advice-fp";
+  function ding() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      var ctx = new AC(), o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.9);
+      o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.95);
+    } catch (e) {}
+  }
+  function showChangePopup(text) {
+    var box = document.getElementById("changepop");
+    if (!box) {
+      box = document.createElement("div"); box.id = "changepop"; box.setAttribute("role", "status");
+      box.innerHTML = '<strong>Advice changed</strong><span id="changetxt"></span><button type="button" aria-label="Close">×</button>';
+      box.querySelector("button").addEventListener("click", function () { box.hidden = true; });
+      document.body.appendChild(box);
+    }
+    document.getElementById("changetxt").textContent = text;
+    box.hidden = false;
+    clearTimeout(box._t); box._t = setTimeout(function () { box.hidden = true; }, 15000);
+  }
+  function checkChanges(rows) {
+    var now = {};
+    rows.forEach(function (c) { now[c.code] = (c.page_date || "") + "|" + (c.headline || ""); });
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(FP_KEY) || "null"); } catch (e) {}
+    try { localStorage.setItem(FP_KEY, JSON.stringify(now)); } catch (e) {}
+    if (!saved) return;
+    var changed = Object.keys(now).filter(function (k) { return saved[k] !== now[k]; });
+    if (!changed.length) return;
+    var names = changed.map(function (k) {
+      var c = rows.filter(function (r) { return r.code === k; })[0]; return c ? c.name : k;
+    });
+    showChangePopup("Updated: " + names.join(", "));
+    ding();
+  }
   function applyData(d) {
     var rows = (d.countries || []).filter(function (c) { return c.name; });
     if (!rows.length) { setLiveStatus(false); return; }
     setLiveStatus(true);
+    checkChanges(rows);
     COUNTRIES = rows.map(function (c) {
       return {
         code: c.code, flag: FLAG_BY_CODE[c.code] || "🏳️", name: c.name, auth: c.authority || "",
