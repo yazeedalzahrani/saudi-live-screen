@@ -88,6 +88,13 @@
   .qr img { width:72px; height:72px; background:#fff; padding:4px; border-radius:4px; }
 
   .side { display:grid; grid-template-rows: minmax(0,1fr); gap:16px; min-height:0; }
+  .flbtn { align-self:flex-start; margin-top:12px; padding:7px 14px; border-radius:999px; border:1px solid var(--accent); background:transparent; color:var(--accent); font:inherit; font-size:14px; cursor:pointer; }
+  .flbtn[aria-expanded="true"] { background:var(--accent); color:#14110a; }
+  .flpanel { margin-top:10px; max-height:260px; overflow:auto; font-size:13px; border-top:1px solid var(--line); padding-top:6px; }
+  .flpanel .fr { padding:7px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  .flpanel .fr b { font-weight:600; }
+  .flpanel .fst { display:block; margin-top:2px; }
+  .flpanel .fst.ok { color:#3ddc84; } .flpanel .fst.warn { color:#e6b04a; } .flpanel .fst.crit { color:#d9825b; }
   .mapcard { display:none; }
   body.mapmode .mapcard { display:flex; }
   .mapcard { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; flex-direction:column; min-height:0; }
@@ -186,6 +193,8 @@
           <h2>Airports and borders</h2>
           <div class="mapwrap"><svg id="map" viewBox="0 0 560 450" role="group" aria-label="Schematic map of Saudi Arabia"></svg></div>
           <div class="mapinfo" id="mapinfo"></div>
+          <button type="button" class="flbtn" id="flbtn" aria-expanded="false" aria-controls="flpanel">Flights to Saudi Arabia ▾</button>
+          <div class="flpanel" id="flpanel" hidden></div>
         </section>
         <aside class="updates" id="updates" aria-label="Recent updates"></aside>
       </div>
@@ -431,6 +440,25 @@
   var flightsAll = [];
   fetch(FLIGHTS_URL, { cache: "no-store" }).then(function (r) { return r.json(); })
     .then(function (d) { flightsAll = d.flights || []; }).catch(function () { flightsAll = []; });
+  (function () {
+    var btn = document.getElementById("flbtn"), panel = document.getElementById("flpanel");
+    btn.addEventListener("click", function () {
+      var open = panel.hidden;
+      if (open) {
+        panel.innerHTML = "";
+        if (!flightsAll.length) { panel.textContent = "Flights could not be loaded."; }
+        flightsAll.forEach(function (f) {
+          var row = document.createElement("div"); row.className = "fr";
+          var head = document.createElement("b"); head.textContent = (f.flag || "") + " " + f.airline + " · " + f.from + " → " + f.to;
+          var st = document.createElement("span"); st.className = "fst " + (f.level || "");
+          st.textContent = f.status + (f.date ? " (" + f.date + ")" : "");
+          row.appendChild(head); row.appendChild(st); panel.appendChild(row);
+        });
+      }
+      panel.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  })();
   var FLAG_BY_CODE = { UK:"🇬🇧", US:"🇺🇸", FR:"🇫🇷", IT:"🇮🇹", DE:"🇩🇪", ES:"🇪🇸", RU:"🇷🇺", CN:"🇨🇳", IN:"🇮🇳" };
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function fmtDate(s) {
