@@ -184,19 +184,6 @@
    "source": "https://flybeond.com/travel-update/"
   },
   {
-   "country": "RU",
-   "flag": "🇷🇺",
-   "airline": "flynas",
-   "code": null,
-   "logo": "logos/flynas.svg",
-   "from": "Moscow",
-   "to": "Saudi Arabia",
-   "level": "warn",
-   "status": "Route announced; start date not confirmed",
-   "date": "2026",
-   "source": "https://www.tboacademy.com/blog/?p=28683"
-  },
-  {
    "country": "CN",
    "flag": "🇨🇳",
    "airline": "Saudia",
