@@ -359,7 +359,7 @@
   }
 
   function renderCardFlights() {
-    var box = document.getElementById("cflights"); if (!box) return;
+    var box = document.getElementById("cflights"); if (!box || !COUNTRIES[i]) return;
     var c = COUNTRIES[i];
     var mine = flightsAll.filter(function (f) { return f.country === c.code; });
     box.innerHTML = "";
@@ -513,7 +513,7 @@
     setLiveStatus(true);
     COUNTRIES = rows.map(function (c) {
       return {
-        flag: FLAG_BY_CODE[c.code] || "🏳️", name: c.name, auth: c.authority || "",
+        code: c.code, flag: FLAG_BY_CODE[c.code] || "🏳️", name: c.name, auth: c.authority || "",
         level: c.headline || "", meter: meterFor(c.headline), detail: c.detail || "",
         meta: "Source date: " + fmtDate(c.page_date || c.verified) + " · Checked " + fmtDate(c.last_ok),
         url: c.url || "#"
