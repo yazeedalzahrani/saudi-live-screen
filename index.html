@@ -520,7 +520,7 @@
   ["pointerdown", "keydown", "touchstart"].forEach(function (ev) {
     document.addEventListener(ev, unlockAudio, { passive: true });
   });
-  function showChangePopup(text) {
+  function showChangePopup(text, heading) {
     var box = document.getElementById("changepop");
     if (!box) {
       box = document.createElement("div"); box.id = "changepop"; box.setAttribute("role", "status");
@@ -528,9 +528,19 @@
       box.querySelector("button").addEventListener("click", function () { box.hidden = true; });
       document.body.appendChild(box);
     }
+    box.querySelector("strong").textContent = heading || "Advice changed";
     document.getElementById("changetxt").textContent = text;
     box.hidden = false;
     clearTimeout(box._t); box._t = setTimeout(function () { box.hidden = true; }, 15000);
+  }
+  // Greets each new visit in this browser tab once, with a pop-up and the soft ding.
+  function showWelcome() {
+    try {
+      if (sessionStorage.getItem("sav-welcomed")) return;
+      sessionStorage.setItem("sav-welcomed", "1");
+    } catch (e) {}
+    showChangePopup("Welcome. Live Saudi travel advice, updated automatically.", "Welcome");
+    ding();
   }
   function checkChanges(rows) {
     var now = {};
@@ -589,6 +599,7 @@
       .catch(function (e) { console.warn("Live data unavailable.", e); setLiveStatus(false); });
   }
   go(0);
+  showWelcome();
   loadData();
   setInterval(loadData, 30 * 60 * 1000);
   setInterval(tick, 100);
