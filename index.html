@@ -330,7 +330,7 @@
   flBtn.type = "button"; flBtn.className = "mapbtn";
   flBtn.innerHTML = '<span class="fl">✈️</span><span><span class="nm">Flights to Saudi Arabia</span><span class="lv">All airlines and routes</span></span>';
   flBtn.addEventListener("click", openFlights);
-  flLi.appendChild(flBtn); list.appendChild(flLi);
+  flLi.appendChild(flBtn); list.insertBefore(flLi, list.firstChild);
   var scale = document.getElementById("scale");
   for (var m = 0; m < 5; m++) scale.appendChild(document.createElement("span"));
 
