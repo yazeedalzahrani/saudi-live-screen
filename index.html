@@ -508,7 +508,7 @@
       });
       POINTS[c.name] = [c.detail || "See the official source for full detail."];
     });
-    Array.prototype.slice.call(list.children).forEach(function (li) { if (li !== mapLi) li.remove(); });
+    Array.prototype.slice.call(list.children).forEach(function (li) { if (li !== mapLi && li !== flLi) li.remove(); });
     COUNTRIES.forEach(function (c, k) {
       var li = document.createElement("li");
       var b = document.createElement("button");
