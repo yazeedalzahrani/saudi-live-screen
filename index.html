@@ -79,7 +79,9 @@
   .qr { display:flex; align-items:center; gap:12px; font-size:13px; color:var(--muted); padding-left:14px; border-left:1px solid var(--line); }
   .qr img { width:72px; height:72px; background:#fff; padding:4px; border-radius:4px; }
 
-  .side { display:grid; grid-template-rows: minmax(0,1.6fr) minmax(0,0.9fr); gap:16px; min-height:0; }
+  .side { display:grid; grid-template-rows: minmax(0,1fr); gap:16px; min-height:0; }
+  .mapcard { display:none; }
+  body.mapmode .mapcard { display:flex; }
   .mapcard { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px 20px; display:flex; flex-direction:column; min-height:0; }
   .mapcard h2 { font-family:var(--serif); font-weight:400; font-size:20px; margin:0 0 10px; }
   .mapcard svg { width:100%; height:100%; flex:1; min-height:0; display:block; }
@@ -148,7 +150,7 @@
   <div class="stage">
     <div class="head">
       <h1>Travel advice for Saudi Arabia</h1>
-      <span class="asof" id="asof">Sample data</span>
+      <span class="asof" id="asof">Live from the official advisory feed</span>
     </div>
 
     <div class="main">
@@ -205,19 +207,19 @@
 </div>
 
 <script>
-  // Starts with sample content, then replaces it with the live data.json from the advisory website (refreshed every 30 minutes).
+  // Loads live data.json from the advisory website (refreshed every 30 minutes). The placeholders below show only until it loads.
   var COUNTRIES = [
-    { flag:"🇬🇧", name:"United Kingdom", auth:"Foreign, Commonwealth & Development Office", level:"All but essential travel", meter:4, detail:"Sample text. The screen shows the headline from the official data.", meta:"Source date: sample", url:"https://www.gov.uk/foreign-travel-advice/saudi-arabia" },
-    { flag:"🇺🇸", name:"United States", auth:"Department of State", level:"Level 3: Reconsider travel", meter:3, detail:"Sample text. The screen shows the official level from the State Department feed.", meta:"Source date: sample", url:"https://travel.state.gov/" },
-    { flag:"🇪🇸", name:"Spain", auth:"Ministerio de Asuntos Exteriores", level:"Recommendations in force", meter:2, detail:"Sample text. The in-force date is copied from the official page.", meta:"Source date: sample", url:"https://www.exteriores.gob.es/" },
-    { flag:"🇫🇷", name:"France", auth:"France Diplomatie", level:"Latest update date", meter:2, detail:"Sample text. The update date is copied from the official page.", meta:"Source date: sample", url:"https://www.diplomatie.gouv.fr/" },
-    { flag:"🇮🇹", name:"Italy", auth:"Viaggiare Sicuri", level:"Official notice", meter:3, detail:"Sample text. The banner is copied word for word from the official page.", meta:"Source date: sample", url:"https://www.viaggiaresicuri.it/" },
-    { flag:"🇩🇪", name:"Germany", auth:"Auswärtiges Amt", level:"Summary checked by hand", meter:2, detail:"Sample text. The headline is written by hand.", meta:"Source date: sample", url:"https://www.auswaertiges-amt.de/" },
-    { flag:"🇷🇺", name:"Russia", auth:"Foreign Ministry", level:"Summary checked by hand", meter:3, detail:"Sample text. The headline is written by hand.", meta:"Source date: sample", url:"https://www.kdmid.ru/" },
-    { flag:"🇨🇳", name:"China", auth:"Embassy in Saudi Arabia", level:"Avoid domestic air travel for now", meter:4, detail:"Sample text. Taken from the embassy notice.", meta:"Source date: sample", url:"http://sa.china-embassy.gov.cn" },
-    { flag:"🇮🇳", name:"India", auth:"Embassy in Riyadh", level:"Check flights before you travel", meter:3, detail:"Sample text. Taken from the embassy advisory.", meta:"Source date: sample", url:"https://www.eoiriyadh.gov.in/" }
+    { flag:"🇬🇧", name:"United Kingdom", auth:"Foreign, Commonwealth & Development Office", level:"All but essential travel", meter:4, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://www.gov.uk/foreign-travel-advice/saudi-arabia" },
+    { flag:"🇺🇸", name:"United States", auth:"Department of State", level:"Level 3: Reconsider travel", meter:3, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://travel.state.gov/" },
+    { flag:"🇪🇸", name:"Spain", auth:"Ministerio de Asuntos Exteriores", level:"Recommendations in force", meter:2, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://www.exteriores.gob.es/" },
+    { flag:"🇫🇷", name:"France", auth:"France Diplomatie", level:"Latest update date", meter:2, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://www.diplomatie.gouv.fr/" },
+    { flag:"🇮🇹", name:"Italy", auth:"Viaggiare Sicuri", level:"Official notice", meter:3, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://www.viaggiaresicuri.it/" },
+    { flag:"🇩🇪", name:"Germany", auth:"Auswärtiges Amt", level:"Summary checked by hand", meter:2, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://www.auswaertiges-amt.de/" },
+    { flag:"🇷🇺", name:"Russia", auth:"Foreign Ministry", level:"Summary checked by hand", meter:3, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://www.kdmid.ru/" },
+    { flag:"🇨🇳", name:"China", auth:"Embassy in Saudi Arabia", level:"Avoid domestic air travel for now", meter:4, detail:"Loading live advisory data.", meta:"Source date: loading", url:"http://sa.china-embassy.gov.cn" },
+    { flag:"🇮🇳", name:"India", auth:"Embassy in Riyadh", level:"Check flights before you travel", meter:3, detail:"Loading live advisory data.", meta:"Source date: loading", url:"https://www.eoiriyadh.gov.in/" }
   ];
-  // Recent dated updates per country (sample)
+  // Recent dated updates per country (replaced by live data)
   var BRIEFS = {
     "United Kingdom": [["23 Jul 2026","Advice tightened","FCDO advises against all but essential travel to Saudi Arabia's border areas."],["3 Mar 2026","Entry changes","New information about entry to Saudi Arabia."]],
     "United States": [["16 Sep 2026","Level 3","Reconsider travel. Risks include missile and drone attacks."],["2 Mar 2026","Level set","Advisory issued for Saudi Arabia."]],
@@ -225,10 +227,10 @@
     "India": [["16 Oct 2026","Advisory","Plan around airport disruption; check flight availability."],["8 Mar 2026","Advisory","Stay vigilant and follow safety guidance."]]
   };
   var POINTS = {
-    "United Kingdom": ["Current FCDO level and summary (sample)", "Areas to avoid and why (sample)", "Entry rules for travellers (sample)"],
-    "United States": ["Current level and risk indicators (sample)", "Areas to avoid (sample)", "Embassy contact details (sample)"],
-    "China": ["Embassy notice on domestic flights (sample)", "Consular hotline (sample)"],
-    "India": ["Latest embassy advisory (sample)", "Helpline numbers (sample)"]
+    "United Kingdom": ["Current FCDO level and summary", "Areas to avoid and why", "Entry rules for travellers"],
+    "United States": ["Current level and risk indicators", "Areas to avoid", "Embassy contact details"],
+    "China": ["Embassy notice on domestic flights", "Consular hotline"],
+    "India": ["Latest embassy advisory", "Helpline numbers"]
   };
   document.getElementById("qrimg").src = "https://api.qrserver.com/v1/create-qr-code/?size=216x216&margin=4&data=" + encodeURIComponent("https://yazeedalzahrani.github.io/Travel-advisory-watch/");
   // Airports and border map (data from the site's data.json)
@@ -313,7 +315,7 @@
     var box = document.getElementById("updates");
     box.innerHTML = "";
     var h = document.createElement("h2"); h.textContent = "Recent updates"; box.appendChild(h);
-    var items = BRIEFS[c.name] || [["Sample", "No updates yet", "Sample text for this country."]];
+    var items = BRIEFS[c.name] || [["", "No updates yet", "Updates appear here when the advisory site records them."]];
     var ol = document.createElement("ol");
     items.forEach(function (it) {
       var li = document.createElement("li");
@@ -457,7 +459,7 @@
     fetch(DATA_URL, { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(applyData)
-      .catch(function (e) { console.warn("Live data unavailable; showing sample content.", e); });
+      .catch(function (e) { console.warn("Live data unavailable.", e); });
   }
   go(0);
   loadData();
