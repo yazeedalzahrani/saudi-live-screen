@@ -459,7 +459,7 @@
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? i + 1 : i - 1);
   });
 
-  var DATA_URL = "https://yazeedalzahrani.github.io/Travel-advisory-watch/data.json";
+  var DATA_URL = "data.json";
   var FLIGHTS_URL = "flights.json";
   var flightsAll = [];
   fetch(FLIGHTS_URL, { cache: "no-store" }).then(function (r) { return r.json(); })
