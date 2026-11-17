@@ -702,6 +702,32 @@
    "status": "No scheduled direct flights (unverified)",
    "date": "Sep 2026",
    "source": ""
+  },
+  {
+   "country": "RU",
+   "flag": "🇷🇺",
+   "airline": "Saudia",
+   "code": "SV",
+   "logo": "logos/saudia.svg",
+   "from": "Moscow Sheremetyevo (SVO)",
+   "to": "Jeddah (JED)",
+   "level": "warn",
+   "status": "3x weekly from 1 Dec 2026 (unverified)",
+   "date": "Dec 2026",
+   "source": ""
+  },
+  {
+   "country": "RU",
+   "flag": "🇷🇺",
+   "airline": "flynas",
+   "code": "XY",
+   "logo": "logos/flynas.svg",
+   "from": "Moscow Vnukovo (VKO)",
+   "to": "Riyadh (RUH)",
+   "level": "warn",
+   "status": "Regular direct flights; schedule not confirmed (unverified)",
+   "date": "Ongoing",
+   "source": ""
   }
  ],
  "returns": [
