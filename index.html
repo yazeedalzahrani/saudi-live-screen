@@ -215,7 +215,7 @@
     <p class="auth2" id="bauth"></p>
     <ul id="blist"></ul>
     <h3 class="bfh">Flights to Saudi Arabia</h3>
-    <ul id="bflights" class="bflights"></ul>
+    <ul id="bflights"></ul>
     <div class="row">
       <span id="bsrc"></span>
       <button type="button" id="bclose">Close</button>
@@ -327,8 +327,8 @@
   mapLi.appendChild(mapBtn); list.appendChild(mapLi);
   var flLi = document.createElement("li");
   var flBtn = document.createElement("button");
-  flBtn.type = "button"; flBtn.className = "mapbtn";
-  flBtn.innerHTML = '<span class="fl">✈️</span><span><span class="nm">Flights to Saudi Arabia</span><span class="lv">All airlines and routes</span></span>';
+  flBtn.type = "button";
+  flBtn.innerHTML = '<span class="fl">✈️</span><span><span class="nm">Flights to Saudi Arabia</span><span class="lv">Airlines, routes and status</span></span>';
   flBtn.addEventListener("click", openFlights);
   flLi.appendChild(flBtn); list.insertBefore(flLi, list.firstChild);
   var scale = document.getElementById("scale");
@@ -406,9 +406,7 @@
     if (!mine.length) { var none = document.createElement("li"); none.textContent = "No flights listed for this country."; fl.appendChild(none); }
     mine.forEach(function (f) {
       var li = document.createElement("li");
-      var head = document.createElement("strong"); head.textContent = f.airline + " · " + f.from + " → " + f.to;
-      var st = document.createElement("span"); st.className = "fst " + (f.level || ""); st.textContent = f.status + (f.date ? " (" + f.date + ")" : "");
-      li.appendChild(head); li.appendChild(document.createElement("br")); li.appendChild(st); fl.appendChild(li);
+      var code = document.createElement("span"); code.className = "code"; code.textContent = f.airline; var t = document.createElement("span"); t.textContent = " " + f.from + " → " + f.to + ": " + f.status + (f.date ? " (" + f.date + ")" : ""); li.appendChild(code); li.appendChild(t); fl.appendChild(li);
     });
     var src = document.getElementById("bsrc"); src.innerHTML = "";
     var a = document.createElement("a"); a.href = c.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Official source ↗";
@@ -425,10 +423,7 @@
     if (!flightsAll.length) { var none = document.createElement("li"); none.textContent = "Flights could not be loaded."; fl.appendChild(none); }
     flightsAll.forEach(function (f) {
       var li = document.createElement("li");
-      var head = document.createElement("strong"); head.textContent = (f.flag || "") + " " + f.airline + " · " + f.from + " → " + f.to;
-      var st = document.createElement("span"); st.className = "fst " + (f.level || "");
-      st.textContent = f.status + (f.date ? " (" + f.date + ")" : "");
-      li.appendChild(head); li.appendChild(document.createElement("br")); li.appendChild(st); fl.appendChild(li);
+      var code = document.createElement("span"); code.className = "code"; code.textContent = f.airline; var t = document.createElement("span"); t.textContent = " " + f.from + " → " + f.to + ": " + f.status + (f.date ? " (" + f.date + ")" : ""); li.appendChild(code); li.appendChild(t); fl.appendChild(li);
     });
     var src = document.getElementById("bsrc"); src.innerHTML = "";
     var a = document.createElement("a"); a.href = "https://yazeedalzahrani.github.io/travel-advisory-watch/flights.html"; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Open the full flights page ↗";
