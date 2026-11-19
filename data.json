@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-17T14:21:24Z",
+  "checked_at": "2026-11-19T12:36:42Z",
   "errors": [],
   "countries": [
     {
@@ -14,8 +14,16 @@
       "link_label": "GOV.UK travel advice",
       "headline": "Against all travel to parts of the country; Against all but essential travel to parts of the country",
       "detail": "Against all travel within 10km of the Yemen border. Insurance may be invalid if you travel against advice. Some versions list only certain provinces, so confirm the current wording on GOV.UK.",
-      "public_updated_at": "2026-10-27T16:54:07+00:00",
+      "public_updated_at": "2026-11-18T16:32:22+00:00",
       "history": [
+        {
+          "stamp": "2026-11-18T16:32:22+00:00",
+          "date": "2026-11-18",
+          "kind": "info",
+          "tag": "New update",
+          "title": "Updated information about regional tensions (See ‘Warnings and insurance’ page).",
+          "text": "Detected automatically from GOV.UK. Open the official page for the full wording."
+        },
         {
           "stamp": "2026-10-27T16:54:07+00:00",
           "date": "2026-10-27",
@@ -60,7 +68,7 @@
           "text": "Against all travel to parts of the country (Yemen border). Travellers told to sign up for alerts and know where to shelter."
         }
       ],
-      "last_ok": "2026-11-17T14:21:07Z"
+      "last_ok": "2026-11-19T12:36:28Z"
     },
     {
       "id": "us",
@@ -126,7 +134,7 @@
           "text": "Non-emergency US government staff authorised to leave Saudi Arabia."
         }
       ],
-      "last_ok": "2026-11-17T14:21:07Z"
+      "last_ok": "2026-11-19T12:36:28Z"
     },
     {
       "id": "fr",
@@ -182,7 +190,7 @@
           "text": "Only the Yemen border area stayed formally advised against, as it was before the conflict."
         }
       ],
-      "last_ok": "2026-11-17T14:21:11Z",
+      "last_ok": "2026-11-19T12:36:29Z",
       "page_date": "10 novembre 2026"
     },
     {
@@ -221,7 +229,7 @@
           "text": "The Jeddah consulate flagged an update citing the military escalation involving Iran. Check the official page for the exact wording."
         }
       ],
-      "last_ok": "2026-11-17T14:21:17Z",
+      "last_ok": "2026-11-19T12:36:34Z",
       "page_date": "22.10.2026"
     },
     {
@@ -291,7 +299,7 @@
         }
       ],
       "public_updated_at": "2026-11-09T13:37:35+00:00",
-      "last_ok": "2026-11-17T14:21:24Z"
+      "last_ok": "2026-11-19T12:36:42Z"
     },
     {
       "id": "es",
@@ -303,10 +311,42 @@
       "verified": "2026-11-16",
       "url": "https://www.exteriores.gob.es/es/ServiciosAlCiudadano/Paginas/Detalle-recomendaciones-de-viaje.aspx?trc=arabia-saudi",
       "link_label": "exteriores.gob.es, Recomendaciones de viaje",
-      "headline": "Recomendaciones vigentes a 17 de noviembre de 2026",
-      "detail": "Official notice dated 17 de noviembre de 2026, copied automatically from the official page. Read the full text there.",
+      "headline": "Current recommendations as of 19 November 2026",
+      "detail": "Automatic translation from Spanish. Official notice copied from the official page; read the original Spanish text there.",
       "public_updated_at": null,
       "history": [
+        {
+          "stamp": "aa1b4a86825a",
+          "date": "2026-11-19",
+          "kind": "warn",
+          "tag": "Official notice",
+          "title": "Recomendaciones vigentes a 19 de noviembre de 2026",
+          "text": "Official notice dated 19 de noviembre de 2026. Open the official page for the full text."
+        },
+        {
+          "stamp": "f3d3eb58b6aa",
+          "date": "2026-11-19",
+          "kind": "info",
+          "tag": "Page changed",
+          "title": "Official page wording changed",
+          "text": "New wording (original language): Recomendaciones vigentes a 19 de noviembre de 2026 / Declaración conjunta sobre el próximo Marco Financiero Plurianual de los ministros de Asuntos Generales de los Estados miembros Amigos de la Cohesión. Open the official page for the full text."
+        },
+        {
+          "stamp": "02a0781173bb",
+          "date": "2026-11-19",
+          "kind": "info",
+          "tag": "Page changed",
+          "title": "Official page wording changed",
+          "text": "New wording (original language): Declaración conjunta sobre el próximo Marco Financiero Plurianual de los representantes en el Consejo de Asuntos Generales de los Estados miembros Amigos de la Cohesión. Open the official page for the full text."
+        },
+        {
+          "stamp": "47f4a2ef1657",
+          "date": "2026-11-18",
+          "kind": "warn",
+          "tag": "Official notice",
+          "title": "Recomendaciones vigentes a 18 de noviembre de 2026",
+          "text": "Official notice dated 18 de noviembre de 2026. Open the official page for the full text."
+        },
         {
           "stamp": "d393d993e0ef",
           "date": "2026-11-17",
@@ -314,6 +354,14 @@
           "tag": "Official notice",
           "title": "Recomendaciones vigentes a 17 de noviembre de 2026",
           "text": "Official notice dated 17 de noviembre de 2026. Open the official page for the full text."
+        },
+        {
+          "stamp": "ca02ac3f86ea",
+          "date": "2026-11-17",
+          "kind": "info",
+          "tag": "Page changed",
+          "title": "Official page wording changed",
+          "text": "New wording (original language): Exteriores pone en marcha el primer Programa de Diplomáticos Visitantes de Países Candidatos a la Unión Europea. Open the official page for the full text."
         },
         {
           "stamp": "ccd222daf47c",
@@ -346,8 +394,9 @@
           "text": "Spain's Saudi Arabia travel recommendations were last updated on 10 June 2026. Check the official page for the full wording."
         }
       ],
-      "last_ok": "2026-11-17T14:21:19Z",
-      "page_date": "17 de noviembre de 2026"
+      "last_ok": "2026-11-19T12:36:38Z",
+      "page_date": "19 de noviembre de 2026",
+      "headline_es": "Recomendaciones vigentes a 19 de noviembre de 2026"
     },
     {
       "id": "ru",
@@ -371,7 +420,7 @@
           "text": "Russians were urged to refrain from tourist trips to the UAE, Kuwait, Bahrain, Qatar, Oman and Saudi Arabia until active fighting ends and flights and airports return to normal."
         }
       ],
-      "last_ok": "2026-11-17T14:21:21Z"
+      "last_ok": "2026-11-19T12:36:39Z"
     },
     {
       "id": "cn",
