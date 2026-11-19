@@ -81,14 +81,22 @@
       "url": "https://travel.state.gov/en/international-travel/travel-advisories/saudi-arabia.html",
       "link_label": "travel.state.gov advisory",
       "headline": "Level 3: Reconsider Travel",
-      "detail": "Yemen border region is Level 4: Do not travel. Cites missile and drone targeting, armed conflict, terrorism, exit bans and social media laws.",
+      "detail": "Latest: US Embassy security alert dated 17 Nov 2026, countrywide: take extreme caution at Saudi airports. Advisory stays Level 3; the Yemen border region is Level 4: Do not travel.",
       "scale": {
         "value": 3,
         "max": 4,
         "label": "Level"
       },
-      "public_updated_at": "2026-10-23T00:00:00+00:00",
+      "public_updated_at": "2026-11-18T00:00:00+00:00",
       "history": [
+        {
+          "stamp": "2026-11-18T00:00:00+00:00",
+          "date": "2026-11-18",
+          "kind": "warn",
+          "tag": "Embassy alert",
+          "title": "US Embassy security alert (dated 17 Nov 2026), countrywide",
+          "text": "The US Mission to Saudi Arabia asks travellers to take extreme caution at Saudi airports after missile and drone attacks. US government staff need special approval to use any airport in the country. The travel advisory stays at Level 3. Source: sa.usembassy.gov"
+        },
         {
           "stamp": "2026-10-23T00:00:00+00:00",
           "date": "2026-10-23",
